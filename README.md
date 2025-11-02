@@ -1,2 +1,1 @@
-# datacompound.github.ioooo
-Testandoo
+# datacompound.github.io
