@@ -3,34 +3,647 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DataCompound | AI-Driven Data Solutions</title>
+  <title>DataCompound | AI-Driven Data & Analytics Consulting</title>
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #0d1117; color: #c9d1d9; text-align: center; }
-    header { background: #161b22; padding: 30px 0; }
-    h1 { color: #58a6ff; }
-    a { color: #58a6ff; text-decoration: none; }
-    section { margin: 40px auto; width: 80%; max-width: 800px; }
-    footer { background: #161b22; padding: 20px 0; margin-top: 40px; color: #8b949e; }
+    :root {
+      --bg: #030712;
+      --bg-alt: #020617;
+      --card: #020617;
+      --border: rgba(75, 85, 99, 0.6);
+      --primary: #38bdf8;
+      --accent: #f97316;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --radius: 16px;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --max-width: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 50%, #000 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Layout */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(
+        to bottom,
+        rgba(3, 7, 18, 0.96),
+        rgba(3, 7, 18, 0.85),
+        transparent
+      );
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      padding: 2px;
+      background: conic-gradient(
+        from 180deg,
+        var(--primary),
+        var(--accent),
+        #22c55e,
+        var(--primary)
+      );
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
+    }
+
+    .logo-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-text span:first-child {
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-text span:last-child {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.8rem;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
+    }
+
+    section {
+      margin: 3.5rem 0;
+    }
+
+    h1, h2, h3 {
+      letter-spacing: 0.02em;
+    }
+
+    h2 {
+      font-size: 1.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p.section-intro {
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.6rem;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .card {
+      background: radial-gradient(circle at top, #020617, #020617 60%, #000 100%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.4rem 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      border-radius: 999px;
+      padding: 0.18rem 0.6rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    /* Hero */
+
+    .hero {
+      display: grid;
+      gap: 2.2rem;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      align-items: center;
+      margin-top: 2rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 4vw, 3rem);
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(120deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero p.lead {
+      color: var(--muted);
+      max-width: 520px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 1.3rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #22d3ee);
+      color: #0b1120;
+      box-shadow: 0 16px 35px rgba(56, 189, 248, 0.55);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(56, 189, 248, 0.7);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+    }
+
+    .hero-right {
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-orbit {
+      position: relative;
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: 0 0 80px rgba(56, 189, 248, 0.45);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), transparent 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-orbit-center {
+      width: 130px;
+      height: 130px;
+      border-radius: 36px;
+      background: radial-gradient(circle at top, #1f2937, #020617);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .hero-orbit-center span {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      color: var(--primary);
+    }
+
+    .hero-chip {
+      position: absolute;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: var(--muted);
+    }
+
+    .hero-chip:nth-child(2) { top: 10%; left: 8%; }
+    .hero-chip:nth-child(3) { bottom: 12%; left: 15%; }
+    .hero-chip:nth-child(4) { top: 28%; right: 4%; }
+
+    /* Contact */
+
+    .contact-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    }
+
+    .contact-grid p {
+      color: var(--muted);
+    }
+
+    .contact-details p {
+      font-size: 0.95rem;
+    }
+
+    .contact-details a {
+      color: var(--primary);
+    }
+
+    footer {
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 1.1rem 1.5rem 2.1rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--muted);
+    }
+
+    @media (max-width: 840px) {
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+      }
+
+      main {
+        padding-inline: 1.1rem;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-right {
+        order: -1;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      footer {
+        padding-inline: 1.1rem;
+      }
+    }
   </style>
 </head>
+
 <body>
+  <!-- Top navigation -->
   <header>
-    <h1>DataCompound</h1>
-    <p>AI-Driven Data Solutions & Business Intelligence Engineering</p>
+    <div class="nav">
+      <div class="nav-left">
+        <!-- If you have a real logo file, replace this block with <img src="images/datacompound-logo.svg" alt="DataCompound logo" /> -->
+        <div class="logo-mark">
+          <div class="logo-inner">DC</div>
+        </div>
+        <div class="brand-text">
+          <span>DataCompound</span>
+          <span>Data · BI · AI Consulting</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#tech">Tech Stack</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
   </header>
 
-  <section>
-    <h2>About</h2>
-    <p>We specialize in designing AI-ready data architectures, integrating Business Intelligence with Machine Learning, and enabling organizations to unlock data-driven innovation.</p>
-  </section>
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <div>
+        <div class="pill">
+          <span>🔍</span> Data Engineering · BI · AI
+        </div>
 
-  <section>
-    <h2>Portfolio</h2>
-    <p>Coming soon: Power BI, Tableau, and AI/ML projects.</p>
-  </section>
+        <h1>
+          Compound your data. <br />
+          <span>Amplify your impact.</span>
+        </h1>
+
+        <p class="lead">
+          DataCompound helps organizations design <strong>AI-ready data architectures</strong>,
+          modernize <strong>Business Intelligence</strong>, and enable
+          <strong>machine learning</strong> on top of trusted, well-modeled data.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#portfolio">View portfolio</a>
+          <a class="btn btn-ghost" href="#contact">Schedule a conversation</a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-orbit">
+          <div class="hero-orbit-center">
+            <span>AI-ready Data</span>
+            Architectures, pipelines, and BI models engineered for ML from day one.
+          </div>
+          <div class="hero-chip">🏗 Data Architecture</div>
+          <div class="hero-chip">📊 BI & Dashboards</div>
+          <div class="hero-chip">🤖 ML Integration</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <h2>About DataCompound</h2>
+      <p class="section-intro">
+        DataCompound is a boutique data & AI practice led by
+        <strong>Diogo Souza</strong>, a data engineer with nearly 15 years of experience
+        across aviation, finance, government, and infrastructure.
+        We specialize in bridging the world of <strong>Business Intelligence</strong>
+        with <strong>Machine Learning</strong> so that analytics and AI grow on the same solid foundation.
+      </p>
+
+      <div class="card">
+        <h3>Our focus</h3>
+        <p>
+          Instead of chasing isolated dashboards or “one-off models”, we design
+          <strong>compound data foundations</strong>: layered architectures (ODS, DWH, marts, semantic models)
+          that support reporting, self-service BI, advanced analytics, and ML in a consistent way.
+        </p>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services">
+      <h2>Services</h2>
+      <p class="section-intro">
+        We partner with organizations that want to evolve from legacy reporting into
+        <strong>modern, AI-ready data ecosystems</strong>.
+      </p>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>AI-Ready Data Architecture</h3>
+          <p>
+            Design and implementation of robust data models and architectures, including
+            operational data stores, data warehouses, data marts, and lakehouse patterns,
+            aligned with your business domains.
+          </p>
+          <div class="tag-row">
+            <span class="tag">Dimensional modeling</span>
+            <span class="tag">Lakehouse</span>
+            <span class="tag">Governance</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>BI & Self-Service Analytics</h3>
+          <p>
+            End-to-end BI solutions: ingestion, transformations, curated marts and semantic models,
+            plus interactive dashboards that serve safety, compliance, operations, financials, and more.
+          </p>
+          <div class="tag-row">
+            <span class="tag">Power BI</span>
+            <span class="tag">Data modeling</span>
+            <span class="tag">KPI design</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>ML & Advanced Analytics Enablement</h3>
+          <p>
+            Preparation of AI-ready datasets and features, integration between BI and ML workflows,
+            and support for forecasting, anomaly detection, and risk/score models.
+          </p>
+          <div class="tag-row">
+            <span class="tag">Python</span>
+            <span class="tag">Databricks</span>
+            <span class="tag">MLOps-ready data</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section id="portfolio">
+      <h2>Selected work</h2>
+      <p class="section-intro">
+        A sample of the initiatives that illustrate our approach to
+        <strong>AI-driven Business Intelligence</strong>. Detailed case studies can be shared on request.
+      </p>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>Aviation Safety & Compliance Data Mart</h3>
+          <p>
+            Consolidated events, investigations, and audits into a unified dimensional model
+            powering safety and compliance analytics for multiple stakeholder groups.
+          </p>
+          <p style="margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);">
+            Tech stack: SQL Server · Databricks · Delta Lake · Power BI
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Self-Service BI for Safety & Operations</h3>
+          <p>
+            Semantic models and dashboards that allow teams to explore incidents, risk ratings,
+            audit findings, and KPIs without manual exports or duplicated logic.
+          </p>
+          <p style="margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);">
+            Tech stack: Power BI · QlikView · Tabular modeling
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>ML-Ready Datasets for Forecasting & Risk</h3>
+          <p>
+            Curated datasets and feature pipelines supporting demand forecasting, anomaly detection,
+            and risk scoring models, built on top of an existing BI foundation.
+          </p>
+          <p style="margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);">
+            Tech stack: Python · Databricks · ML/AI libraries
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Tech stack -->
+    <section id="tech">
+      <h2>Tech stack</h2>
+      <p class="section-intro">
+        We work with modern cloud-native data and analytics platforms, focusing on
+        <strong>Azure, Databricks, and the modern BI ecosystem</strong>.
+      </p>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <h3>Cloud & Data Platforms</h3>
+          <p>Azure · Databricks · Delta Lake · SQL Server · Data Warehouse & Lakehouse patterns</p>
+        </article>
+        <article class="card">
+          <h3>Analytics & BI</h3>
+          <p>Power BI · QlikView · semantic modeling · metrics layers · self-service enablement</p>
+        </article>
+        <article class="card">
+          <h3>AI & ML</h3>
+          <p>Python · ML/AI libraries · feature design · integration between BI and ML workflows</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <h2>Let’s talk</h2>
+      <div class="contact-grid">
+        <div>
+          <p>
+            Whether you’re planning a new data platform, modernizing legacy BI, or preparing for AI initiatives,
+            DataCompound can help you design a pragmatic roadmap and build the foundations that last.
+          </p>
+          <div class="hero-actions" style="margin-top: 1.3rem;">
+            <a class="btn btn-primary" href="mailto:contact@datacompound.ai">Email DataCompound</a>
+            <a class="btn btn-ghost" href="https://www.linkedin.com/in/diogosouza/" target="_blank" rel="noreferrer">
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <div class="card contact-details">
+          <p><strong>Email</strong><br />
+            <a href="mailto:contact@datacompound.ai">contact@datacompound.ai</a>
+          </p>
+          <p style="margin-top: 0.8rem;"><strong>LinkedIn</strong><br />
+            <a href="https://www.linkedin.com/in/diogosouza/" target="_blank" rel="noreferrer">
+              linkedin.com/in/diogosouza
+            </a>
+          </p>
+          <p style="margin-top: 0.8rem;"><strong>GitHub</strong><br />
+            <a href="https://github.com/datacompound" target="_blank" rel="noreferrer">
+              github.com/datacompound
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    <p>© 2025 DataCompound | Built on GitHub Pages</p>
+    <span>© 2025 DataCompound. All rights reserved.</span>
+    <span>Built with GitHub Pages · Designed for AI-ready data & analytics.</span>
   </footer>
 </body>
 </html>
