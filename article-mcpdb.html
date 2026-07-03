@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCPDB: Bridging DW/BI to AI-Ready Environments via MCP — DataCompound</title>
+
+  <script>
+    (function () {
+      var t = localStorage.getItem('dc-theme');
+      var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = t || (dark ? 'dark' : 'light');
+    })();
+  </script>
+
+  <meta name="description" content="MCPDB Reference Architecture: a four-layer framework that retrofits an MCP control plane onto existing DW/BI infrastructure, enabling AI agents to securely consume enterprise data. By Diogo de Lima Souza, IEEE Senior Member." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.datacompound.com.br/article-mcpdb.html" />
+  <meta property="og:title" content="Bridging DW/BI Infrastructure to AI-Ready Environments via MCP" />
+  <meta property="og:description" content="MCPDB: a four-layer reference architecture that resolves the DW/BI–AI readiness gap without dismantling existing BI tooling." />
+  <meta property="og:image" content="https://www.datacompound.com.br/images/datacompound-banner.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="images/datacompound-logo.png" />
+
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --border: rgba(75, 85, 99, 0.6);
+      --primary: #2f82ff;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --radius: 16px;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+      --max-width: 1120px;
+      --read-width: 740px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: rgba(100, 116, 139, 0.25);
+      --primary: #2563eb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --shadow: 0 18px 45px rgba(148, 163, 184, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b1730 0, #020617 50%, #000 100%);
+      color: var(--text);
+      line-height: 1.7;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    [data-theme="light"] body {
+      background: radial-gradient(circle at top, #dbeafe 0, #f8fafc 50%, #f1f5f9 100%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(to bottom, rgba(3,7,18,0.96), rgba(3,7,18,0.85), transparent);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    [data-theme="light"] header {
+      background: linear-gradient(to bottom, rgba(248,250,252,0.96), rgba(248,250,252,0.85), transparent);
+      border-bottom-color: rgba(203, 213, 225, 0.8);
+    }
+
+    .nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0.8rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .logo-img {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      box-shadow: 0 0 22px rgba(37, 99, 235, 0.5);
+    }
+
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-text span:first-child { font-weight: 600; font-size: 0.95rem; }
+    .brand-text span:last-child { font-size: 0.75rem; color: var(--muted); }
+
+    .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+    .back-link {
+      font-size: 0.82rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.28rem 0.8rem;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .back-link:hover { color: var(--text); }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0.28rem 0.55rem;
+      line-height: 1;
+    }
+
+    /* ── ARTICLE LAYOUT ── */
+    .article-wrapper {
+      max-width: var(--read-width);
+      margin: 0 auto;
+      padding: 3rem 1.4rem 5rem;
+    }
+
+    /* ── META HEADER ── */
+    .article-meta {
+      margin-bottom: 2.5rem;
+    }
+
+    .article-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .article-title {
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.6rem;
+    }
+
+    .article-subtitle {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 1.4rem;
+    }
+
+    .article-byline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .article-byline strong { color: var(--text); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      color: #93c5fd;
+    }
+
+    [data-theme="light"] .badge {
+      background: rgba(37, 99, 235, 0.08);
+      border-color: rgba(37, 99, 235, 0.3);
+      color: #1d4ed8;
+    }
+
+    /* ── ABSTRACT ── */
+    .abstract-block {
+      background: radial-gradient(circle at top, #020617, #020617 60%, #000 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.6rem 1.8rem;
+      margin: 2rem 0;
+      transition: background 0.3s;
+    }
+
+    [data-theme="light"] .abstract-block {
+      background: radial-gradient(circle at top, #fff, #f8fafc 60%, #f1f5f9 100%);
+    }
+
+    .abstract-block h2 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.8rem;
+    }
+
+    .abstract-block p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* ── SECTIONS ── */
+    .article-section { margin: 2.5rem 0; }
+
+    .article-section h2 {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.01em;
+    }
+
+    .article-section h3 {
+      font-size: 1.05rem;
+      margin: 1.4rem 0 0.5rem;
+      color: #93c5fd;
+    }
+
+    [data-theme="light"] .article-section h3 { color: #1d4ed8; }
+
+    .article-section p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .article-section p strong { color: var(--text); }
+
+    /* ── STAT CARDS ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-card {
+      background: radial-gradient(circle at top, #020617, #020617 60%, #000 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.3rem;
+      text-align: center;
+      transition: background 0.3s;
+    }
+
+    [data-theme="light"] .stat-card {
+      background: radial-gradient(circle at top, #fff, #f8fafc 60%, #f1f5f9 100%);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #2f82ff, #22d3ee);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    /* ── FAILURE MODES ── */
+    .failure-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin: 1rem 0;
+    }
+
+    .failure-list li {
+      background: radial-gradient(circle at top, #020617, #020617 60%, #000 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      transition: background 0.3s;
+    }
+
+    [data-theme="light"] .failure-list li {
+      background: radial-gradient(circle at top, #fff, #f8fafc 60%, #f1f5f9 100%);
+    }
+
+    .failure-list li strong { color: var(--text); display: block; margin-bottom: 0.2rem; }
+
+    /* ── LAYERS ── */
+    .layer-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 1.2rem 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .layer {
+      padding: 0.85rem 1.2rem;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .layer:last-child { border-bottom: none; }
+
+    .layer-l4 { background: rgba(37, 99, 235, 0.12); }
+    .layer-mcp { background: rgba(37, 99, 235, 0.22); border-color: rgba(37, 99, 235, 0.5); }
+    .layer-l3 { background: rgba(14, 165, 233, 0.10); }
+    .layer-l2 { background: rgba(15, 23, 42, 0.6); }
+    .layer-l1 { background: rgba(15, 23, 42, 0.3); }
+
+    [data-theme="light"] .layer-l4 { background: rgba(37, 99, 235, 0.07); }
+    [data-theme="light"] .layer-mcp { background: rgba(37, 99, 235, 0.14); }
+    [data-theme="light"] .layer-l3 { background: rgba(14, 165, 233, 0.06); }
+    [data-theme="light"] .layer-l2 { background: rgba(241, 245, 249, 0.9); }
+    [data-theme="light"] .layer-l1 { background: rgba(248, 250, 252, 0.9); }
+
+    .layer-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .layer-mcp .layer-tag { color: #22d3ee; }
+
+    .layer p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+    /* ── COMPARISON TABLE ── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin: 1.2rem 0;
+    }
+
+    .comparison-table th {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table td {
+      padding: 0.65rem 0.8rem;
+      border-bottom: 1px solid rgba(75, 85, 99, 0.2);
+      color: var(--muted);
+    }
+
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr.highlight td { color: var(--text); background: rgba(37, 99, 235, 0.07); }
+    .comparison-table tr.highlight td:first-child { font-weight: 600; }
+
+    .good  { color: #34d399; }
+    .mid   { color: #fbbf24; }
+    .bad   { color: #f87171; }
+
+    /* ── CTA ── */
+    .cta-block {
+      background: radial-gradient(circle at top, rgba(37, 99, 235, 0.12), transparent 70%),
+                  radial-gradient(circle at bottom, #020617, #020617);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      margin: 2.5rem 0;
+      transition: background 0.3s;
+    }
+
+    [data-theme="light"] .cta-block {
+      background: radial-gradient(circle at top, rgba(37, 99, 235, 0.07), transparent 70%),
+                  radial-gradient(circle at bottom, #f8fafc, #f1f5f9);
+    }
+
+    .cta-block h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    .cta-block p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.3rem; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 1.4rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: transform 0.16s, box-shadow 0.16s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2f82ff, #22d3ee);
+      color: #0b1120;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6);
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 16px 38px rgba(37, 99, 235, 0.8); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+      margin-left: 0.8rem;
+    }
+
+    .btn-ghost:hover { color: var(--text); }
+
+    /* ── KEYWORDS ── */
+    .keyword-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .keyword {
+      font-size: 0.72rem;
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+    }
+
+    [data-theme="light"] .keyword { background: rgba(241, 245, 249, 0.9); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(15, 23, 42, 0.95);
+      padding: 1.1rem 1.4rem 2rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    [data-theme="light"] footer { border-top-color: rgba(203, 213, 225, 0.8); }
+
+    @media (max-width: 640px) {
+      .article-wrapper { padding: 2rem 1.1rem 4rem; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .btn-ghost { margin-left: 0; margin-top: 0.6rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="nav">
+      <a href="index.html" class="nav-left">
+        <img src="images/datacompound-logo.png" alt="DataCompound logo" class="logo-img" />
+        <div class="brand-text">
+          <span>DataCompound</span>
+          <span>Intelligent Data Solutions</span>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <a href="index.html#research" class="back-link">&#8592; Research</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="article-wrapper">
+
+    <div class="article-meta">
+      <div class="article-label">
+        <span>&#128196;</span> SSRN Preprint &mdash; June 2026
+      </div>
+
+      <h1 class="article-title">
+        Bridging Conventional Data Warehouse and BI Infrastructure to AI-Ready Environments via the Model Context Protocol
+      </h1>
+
+      <p class="article-subtitle">
+        A Reference Architecture for Governed, Agent-Consumable Data Platforms
+      </p>
+
+      <div class="article-byline">
+        <span><strong>Diogo de Lima Souza</strong></span>
+        <span class="badge">IEEE Senior Member</span>
+        <span>Senior Data Engineer &amp; Data Architect</span>
+        <span>Independent Researcher</span>
+        <span>DataCompound</span>
+      </div>
+    </div>
+
+    <div class="abstract-block">
+      <h2>Abstract</h2>
+      <p>
+        Enterprises operating mature data warehouse and business intelligence (DW/BI) stacks face a structural barrier when adopting large language model (LLM)-powered analytics: their data surfaces, optimised for SQL clients and BI tools, lack the governed, tool-addressable interface required by AI agents. This paper proposes the <strong style="color:var(--text)">MCP Data Bridge Architecture (MCPDB)</strong>, a four-layer reference architecture that retrofits an MCP control plane onto existing DW/BI infrastructure &mdash; specifically Azure SQL Database, Azure Data Lake Storage Gen2, and Databricks &mdash; enabling any MCP-compatible AI agent to securely consume, query, and act on enterprise data without dismantling incumbent investments.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <span class="stat-value">17&ndash;23pp</span>
+        <span class="stat-label">improvement in LLM query accuracy with semantic layer grounding</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">O(N+M)</span>
+        <span class="stat-label">integration surface vs. O(N&times;M) with ad hoc connectors</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">100%</span>
+        <span class="stat-label">governance fidelity across all 5 evaluated scenarios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">67&ndash;69%</span>
+        <span class="stat-label">projected query accuracy vs. 45&ndash;51% with raw schema only</span>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- PROBLEM -->
+    <div class="article-section">
+      <h2>The DW/BI&ndash;AI Readiness Gap</h2>
+      <p>
+        A 2025 Cloudera survey found that 96% of enterprises had integrated AI into core processes, yet a majority reported that transformative value remained elusive due to limitations of their existing data infrastructure. MuleSoft's 2025 connectivity benchmark reinforces this: <strong>95% of IT leaders say integration issues directly impede their AI adoption plans.</strong>
+      </p>
+      <p>
+        The root cause is architectural. Data warehouses optimise for columnar storage, SQL access, and human-readable dashboards. They do not natively expose the tool-addressable, governed, schema-rich surfaces that LLM agents require. Three specific failure modes emerge:
+      </p>
+
+      <ul class="failure-list">
+        <li>
+          <strong>Semantic Ambiguity</strong>
+          Column names like <code>arr_usd_contracted</code> or <code>churn_flag_30d</code> encode institutional knowledge obvious to a trained analyst but opaque to a language model. Empirical benchmarks demonstrate a 17&ndash;23 percentage point accuracy gap between LLMs given a raw schema versus a curated semantic context document.
+        </li>
+        <li>
+          <strong>The N&times;M Integration Problem</strong>
+          Connecting M agent systems to N data tools requires up to N&times;M custom connectors. Each integration is point-to-point, brittle, and difficult to govern. MCP resolves this structurally, reducing O(N&times;M) to O(N+M).
+        </li>
+        <li>
+          <strong>Governance Bypass</strong>
+          Ad hoc agent integrations bypass the RBAC, dynamic data masking, and audit logging mechanisms built into the warehouse, creating a governance shadow: AI agents acting on data with no audit trail, no masking enforcement, and no access logging.
+        </li>
+      </ul>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- ARCHITECTURE -->
+    <div class="article-section">
+      <h2>The MCPDB Reference Architecture</h2>
+      <p>
+        MCPDB is a <strong>four-layer reference architecture</strong> organised around a governed MCP control plane. The MCP boundary sits between the semantic/governance layer and the agent/consumption layer. Existing BI tools retain their SQL/DAX connections throughout &mdash; MCPDB is additive, not a replacement.
+      </p>
+
+      <div class="layer-stack">
+        <div class="layer layer-l4">
+          <span class="layer-tag">L4 &middot; Agent &amp; Consumption Layer</span>
+          <p>LangGraph · CrewAI · PydanticAI · Databricks AutoML · Power BI · Looker · Claude / GPT-4o · Custom agent workflows</p>
+        </div>
+        <div class="layer layer-mcp">
+          <span class="layer-tag">MCP Control Plane &mdash; Governed Tool Boundary</span>
+          <p>Tool discovery · OAuth token propagation · RBAC enforcement · DDM pass-through · Audit logging · HITL gates · Prompt-injection defence</p>
+        </div>
+        <div class="layer layer-l3">
+          <span class="layer-tag">L3 &middot; Semantic &amp; Governance Layer</span>
+          <p>dbt Semantic Layer (MetricFlow) · Unity Catalog Metrics · Azure Purview / Microsoft Fabric · OpenMetadata · Data contracts · Vector store (AI Search)</p>
+        </div>
+        <div class="layer layer-l2">
+          <span class="layer-tag">L2 &middot; Transformation &amp; Orchestration Layer</span>
+          <p>dbt Core / dbt Cloud · Azure Data Factory · Databricks Workflows · Kafka + Spark Structured Streaming · Databricks AI Functions in SQL</p>
+        </div>
+        <div class="layer layer-l1">
+          <span class="layer-tag">L1 &middot; Storage &amp; Table Format Layer</span>
+          <p>Azure Data Lake Storage Gen2 · Delta Lake (Unity Catalog) · Azure SQL Database · Databricks Lakehouse · Apache Iceberg</p>
+        </div>
+      </div>
+
+      <h3>The MCP Server as Governance Enforcer</h3>
+      <p>
+        The MCP server is an <strong>active governance layer</strong>, not a pass-through proxy. It forwards the agent's OAuth 2.0 token to the warehouse on every call (RBAC applies), enforces dynamic data masking, logs every tool call to a Unity Catalog audit table, and gates write-capable tools behind human-in-the-loop approval flows.
+      </p>
+
+      <h3>Semantic Layer as Agent Grounding</h3>
+      <p>
+        Certified metric definitions (dbt MetricFlow YAML) are served to agents as MCP Resources before query formulation. This ensures agents always use the approved calculation and filter logic rather than inferring them from raw schemas &mdash; the mechanism responsible for the 17&ndash;23pp accuracy improvement.
+      </p>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- COMPARISON -->
+    <div class="article-section">
+      <h2>How MCPDB Compares</h2>
+      <p>MCPDB evaluated against three alternative migration strategies:</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Strategy</th>
+            <th>Governance</th>
+            <th>Accuracy Gain</th>
+            <th>Migration Cost</th>
+            <th>BI Continuity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Full re-platforming</td>
+            <td class="good">High</td>
+            <td class="good">+17&ndash;23pp</td>
+            <td class="bad">Very High</td>
+            <td class="bad">Disrupted</td>
+          </tr>
+          <tr>
+            <td>Direct API exposure</td>
+            <td class="bad">Low</td>
+            <td class="bad">+4&ndash;9pp</td>
+            <td class="mid">Medium</td>
+            <td class="good">Preserved</td>
+          </tr>
+          <tr>
+            <td>LLM-native warehouse</td>
+            <td class="mid">Medium</td>
+            <td class="mid">+15&ndash;20pp</td>
+            <td class="bad">High</td>
+            <td class="mid">Partial</td>
+          </tr>
+          <tr class="highlight">
+            <td>MCPDB (proposed)</td>
+            <td class="good">High</td>
+            <td class="good">+17&ndash;23pp</td>
+            <td class="good">Low&ndash;Medium</td>
+            <td class="good">Fully preserved</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- PRACTICAL GUIDANCE -->
+    <div class="article-section">
+      <h2>Practical Guidance for Data Architects</h2>
+      <p>MCPDB suggests a concrete four-step additive sequence:</p>
+      <ul class="failure-list">
+        <li><strong>1. Establish a governed unified catalog</strong> Unity Catalog or Azure Purview. Register all warehouse assets before exposing anything via MCP.</li>
+        <li><strong>2. Build the dbt Semantic Layer</strong> Cover the top business metrics. This is the highest-leverage AI-readiness investment you can make today.</li>
+        <li><strong>3. Deploy the MCP server</strong> Read-only tools available to authorised agents; write-capable tools HITL-gated. BI tools are untouched.</li>
+        <li><strong>4. Implement the first agentic use case</strong> Pipeline health monitoring or metric anomaly investigation: well-bounded scope, immediate value, low risk.</li>
+      </ul>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- KEYWORDS -->
+    <div class="article-section">
+      <h2>Keywords</h2>
+      <div class="keyword-row">
+        <span class="keyword">Model Context Protocol</span>
+        <span class="keyword">Data Warehouse Modernisation</span>
+        <span class="keyword">AI-Ready Data Infrastructure</span>
+        <span class="keyword">Semantic Layer</span>
+        <span class="keyword">LLM Agents</span>
+        <span class="keyword">Databricks</span>
+        <span class="keyword">dbt</span>
+        <span class="keyword">Delta Lake</span>
+        <span class="keyword">Azure</span>
+        <span class="keyword">Agentic Analytics</span>
+        <span class="keyword">Governance</span>
+        <span class="keyword">Unity Catalog</span>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="cta-block">
+      <h3>Read the Full Paper</h3>
+      <p>Published as an SSRN preprint, June 2026. Full text including all tables, reference implementation details, and 23-entry bibliography.</p>
+      <a class="btn btn-primary" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6868099" target="_blank" rel="noreferrer">Read on SSRN</a>
+      <a class="btn btn-ghost" href="index.html#contact">Discuss this work</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>© 2026 DataCompound. All rights reserved.</span>
+    <span>Intelligent Data Solutions · <a href="index.html">datacompound.com.br</a></span>
+  </footer>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      themeToggle.textContent = theme === 'dark' ? '☀' : '☾';
+      localStorage.setItem('dc-theme', theme);
+    }
+
+    themeToggle.addEventListener('click', () => {
+      applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾';
+  </script>
+</body>
+</html>
