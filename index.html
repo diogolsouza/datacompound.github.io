@@ -1,23 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DataCompound | Intelligent Data Solutions</title>
+  <title>DataCompound | Soluções Inteligentes de Dados</title>
+
+  <!-- Anti-flash: set theme before CSS renders -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('dc-theme');
+      var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = t || (dark ? 'dark' : 'light');
+    })();
+  </script>
+
+  <meta name="description" content="DataCompound é uma consultoria boutique de dados & IA especializada em arquiteturas modernas de dados, Business Intelligence e pipelines prontos para ML. Atendemos clientes no Brasil, Europa e EUA." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.datacompound.com.br/" />
+  <meta property="og:title" content="DataCompound | Soluções Inteligentes de Dados" />
+  <meta property="og:description" content="Projetamos e implementamos arquiteturas de dados modernas, soluções de Business Intelligence e pipelines prontos para machine learning." />
+  <meta property="og:image" content="https://www.datacompound.com.br/images/datacompound-banner.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DataCompound | Soluções Inteligentes de Dados" />
+  <meta name="twitter:description" content="Arquiteturas de dados modernas, BI e pipelines prontos para ML." />
+  <meta name="twitter:image" content="https://www.datacompound.com.br/images/datacompound-banner.png" />
+  <link rel="icon" type="image/png" href="images/datacompound-logo.png" />
 
   <style>
+    /* ── Dark theme (default) ── */
     :root {
       --bg: #020617;
-      --bg-alt: #020617;
       --card: #020617;
       --border: rgba(75, 85, 99, 0.6);
       --primary: #2f82ff;
-      --accent: #00b4ff;
       --text: #e5e7eb;
       --muted: #9ca3af;
       --radius: 16px;
       --shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
       --max-width: 1120px;
+    }
+
+    /* ── Light theme ── */
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: rgba(100, 116, 139, 0.25);
+      --primary: #2563eb;
+      --text: #0f172a;
+      --muted: #64748b;
+      --shadow: 0 18px 45px rgba(148, 163, 184, 0.25);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,24 +58,29 @@
       background: radial-gradient(circle at top, #0b1730 0, #020617 50%, #000 100%);
       color: var(--text);
       line-height: 1.6;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    [data-theme="light"] body {
+      background: radial-gradient(circle at top, #dbeafe 0, #f8fafc 50%, #f1f5f9 100%);
     }
 
     a { color: inherit; text-decoration: none; }
 
-    /* HEADER / NAV */
-
+    /* ── HEADER ── */
     header {
       position: sticky;
       top: 0;
       z-index: 30;
       backdrop-filter: blur(16px);
-      background: linear-gradient(
-        to bottom,
-        rgba(3, 7, 18, 0.96),
-        rgba(3, 7, 18, 0.85),
-        transparent
-      );
+      background: linear-gradient(to bottom, rgba(3,7,18,0.96), rgba(3,7,18,0.85), transparent);
       border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    [data-theme="light"] header {
+      background: linear-gradient(to bottom, rgba(248,250,252,0.96), rgba(248,250,252,0.85), transparent);
+      border-bottom-color: rgba(203, 213, 225, 0.8);
     }
 
     .nav {
@@ -70,19 +106,47 @@
       box-shadow: 0 0 28px rgba(37, 99, 235, 0.6);
     }
 
-    .brand-text {
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-text span:first-child { font-weight: 600; letter-spacing: 0.04em; }
+    .brand-text span:last-child { font-size: 0.8rem; color: var(--muted); }
+
+    .nav-controls {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      margin-left: auto;
     }
 
-    .brand-text span:first-child {
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
+    .lang-switcher { display: flex; gap: 0.1rem; }
 
-    .brand-text span:last-child {
-      font-size: 0.8rem;
+    .lang-btn {
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 6px;
       color: var(--muted);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.22rem 0.42rem;
+      letter-spacing: 0.05em;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .lang-btn:hover, .lang-btn.active {
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 0.28rem 0.55rem;
+      line-height: 1;
+      transition: border-color 0.15s;
     }
 
     .nav-links {
@@ -92,9 +156,22 @@
       font-size: 0.9rem;
     }
 
-    .nav-links a { color: var(--muted); }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a { color: var(--muted); transition: color 0.15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
 
+    .hamburger {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.3rem 0.65rem;
+      line-height: 1;
+    }
+
+    /* ── MAIN ── */
     .pill {
       border-radius: 999px;
       border: 1px solid var(--border);
@@ -105,7 +182,10 @@
       gap: 0.4rem;
       color: var(--muted);
       background: rgba(15, 23, 42, 0.9);
+      transition: background 0.3s;
     }
+
+    [data-theme="light"] .pill { background: rgba(248, 250, 252, 0.9); }
 
     main {
       max-width: var(--max-width);
@@ -114,7 +194,6 @@
     }
 
     section { margin: 3.3rem 0; }
-
     h1, h2, h3 { letter-spacing: 0.02em; }
     h2 { font-size: 1.9rem; margin-bottom: 0.5rem; }
 
@@ -133,17 +212,17 @@
       border: 1px solid var(--border);
       padding: 1.4rem 1.5rem;
       box-shadow: var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    [data-theme="light"] .card {
+      background: radial-gradient(circle at top, #fff, #f8fafc 60%, #f1f5f9 100%);
     }
 
     .card h3 { font-size: 1.1rem; margin-bottom: 0.4rem; }
     .card p { font-size: 0.9rem; color: var(--muted); }
 
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-top: 0.75rem;
-    }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.75rem; }
 
     .tag {
       font-size: 0.72rem;
@@ -152,15 +231,23 @@
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(148, 163, 184, 0.6);
       color: var(--muted);
+      transition: background 0.3s;
     }
 
-    /* HERO WITH BANNER + ORBIT */
+    [data-theme="light"] .tag { background: rgba(241, 245, 249, 0.9); }
 
+    /* ── HERO ── */
     .hero-wrapper {
       border-radius: 24px;
       overflow: hidden;
       box-shadow: 0 24px 60px rgba(15, 23, 42, 0.95);
       border: 1px solid rgba(15, 23, 42, 0.95);
+      transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    [data-theme="light"] .hero-wrapper {
+      box-shadow: 0 24px 60px rgba(100, 116, 139, 0.2);
+      border-color: rgba(203, 213, 225, 0.8);
     }
 
     .hero {
@@ -175,17 +262,28 @@
         url("images/datacompound-banner.png");
       background-size: cover;
       background-position: center;
+      transition: background 0.3s;
     }
 
-    .hero h1 {
-      font-size: clamp(2.3rem, 3.6vw, 3rem);
-      margin-bottom: 0.6rem;
+    [data-theme="light"] .hero {
+      background-image:
+        linear-gradient(to right, rgba(248,250,252,0.97), rgba(248,250,252,0.88)),
+        url("images/datacompound-banner.png");
     }
 
-    .hero h1 span {
+    .hero h1 { font-size: clamp(2.3rem, 3.6vw, 3rem); margin-bottom: 0.6rem; }
+
+    .hero h1 .brand-name {
       background: linear-gradient(120deg, #ffffff, #c4ddff);
       -webkit-background-clip: text;
+      background-clip: text;
       color: transparent;
+    }
+
+    [data-theme="light"] .hero h1 .brand-name {
+      background: linear-gradient(120deg, #1e3a8a, #2563eb);
+      -webkit-background-clip: text;
+      background-clip: text;
     }
 
     .hero-subtitle {
@@ -193,19 +291,15 @@
       font-weight: 500;
       color: #dbeafe;
       margin-bottom: 0.35rem;
+      transition: color 0.3s;
     }
 
-    .hero p.lead {
-      color: #e5e7eb;
-      max-width: 520px;
-    }
+    [data-theme="light"] .hero-subtitle { color: #1d4ed8; }
 
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      margin-top: 1.4rem;
-    }
+    .hero p.lead { color: #e5e7eb; max-width: 520px; transition: color 0.3s; }
+    [data-theme="light"] .hero p.lead { color: #334155; }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.4rem; }
 
     .btn {
       display: inline-flex;
@@ -217,7 +311,7 @@
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 500;
-      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+      transition: transform 0.16s, box-shadow 0.16s, background 0.16s;
     }
 
     .btn-primary {
@@ -226,10 +320,7 @@
       box-shadow: 0 16px 35px rgba(37, 99, 235, 0.7);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 42px rgba(37, 99, 235, 0.9);
-    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 18px 42px rgba(37, 99, 235, 0.9); }
 
     .btn-ghost {
       background: transparent;
@@ -237,18 +328,12 @@
       color: var(--muted);
     }
 
-    .btn-ghost:hover {
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text);
-    }
+    .btn-ghost:hover { background: rgba(15, 23, 42, 0.9); color: var(--text); }
+    [data-theme="light"] .btn-ghost:hover { background: rgba(241, 245, 249, 0.9); }
 
-    .hero-right {
-      display: flex;
-      justify-content: center;
-    }
+    .hero-right { display: flex; justify-content: center; }
 
-    /* Orbit object with floating chips */
-
+    /* ── ORBIT ── */
     .orbit {
       position: relative;
       width: 260px;
@@ -262,6 +347,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    [data-theme="light"] .orbit {
+      background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.12), transparent 70%),
+        radial-gradient(circle at bottom, rgba(241,245,249,0.95), #f8fafc);
+      box-shadow: 0 0 80px rgba(37, 99, 235, 0.2);
     }
 
     .orbit-center {
@@ -275,22 +368,27 @@
       align-items: center;
       justify-content: center;
       padding: 0.9rem;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       text-align: center;
-      color: var(--muted);
+      transition: background 0.3s;
     }
 
-    .orbit-center span {
+    [data-theme="light"] .orbit-center {
+      background: radial-gradient(circle at top, #e2e8f0, #f8fafc);
+      border-color: rgba(100, 116, 139, 0.5);
+    }
+
+    .orbit-title {
       display: block;
       font-weight: 600;
       margin-bottom: 0.25rem;
-      color: #e5e7eb;
+      color: var(--text);
     }
 
-    .orbit-center strong {
-      color: #bfdbfe;
+    .orbit-body {
       display: block;
-      margin-bottom: 0.15rem;
+      color: var(--muted);
+      font-size: 0.78rem;
     }
 
     .chip {
@@ -305,6 +403,12 @@
       align-items: center;
       gap: 0.35rem;
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+      transition: background 0.3s;
+    }
+
+    [data-theme="light"] .chip {
+      background: rgba(248, 250, 252, 0.96);
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.3);
     }
 
     .chip-icon {
@@ -319,46 +423,24 @@
       color: white;
     }
 
-    /* positions + floating animation */
-
     @keyframes float1 {
-      0%   { transform: translate(-6px, -4px); }
-      50%  { transform: translate(4px, 4px); }
-      100% { transform: translate(-6px, -4px); }
+      0%, 100% { transform: translate(-6px, -4px); }
+      50%       { transform: translate(4px, 4px); }
     }
-
     @keyframes float2 {
-      0%   { transform: translate(3px, -3px); }
-      50%  { transform: translate(-5px, 3px); }
-      100% { transform: translate(3px, -3px); }
+      0%, 100% { transform: translate(3px, -3px); }
+      50%      { transform: translate(-5px, 3px); }
     }
-
     @keyframes float3 {
-      0%   { transform: translate(-4px, 5px); }
-      50%  { transform: translate(4px, -4px); }
-      100% { transform: translate(-4px, 5px); }
+      0%, 100% { transform: translate(-4px, 5px); }
+      50%      { transform: translate(4px, -4px); }
     }
 
-    .chip-architecture {
-      top: 12%;
-      left: 4%;
-      animation: float1 7s ease-in-out infinite;
-    }
+    .chip-architecture { top: 12%; left: 4%;  animation: float1 7s ease-in-out infinite; }
+    .chip-ml           { top: 22%; right: -4%; animation: float2 8s ease-in-out infinite; }
+    .chip-bi           { bottom: 10%; left: 12%; animation: float3 9s ease-in-out infinite; }
 
-    .chip-ml {
-      top: 22%;
-      right: -4%;
-      animation: float2 8s ease-in-out infinite;
-    }
-
-    .chip-bi {
-      bottom: 10%;
-      left: 12%;
-      animation: float3 9s ease-in-out infinite;
-    }
-
-    /* CONTACT */
-
+    /* ── CONTACT ── */
     .contact-grid {
       display: grid;
       gap: 1.6rem;
@@ -369,6 +451,7 @@
     .contact-details p { font-size: 0.95rem; }
     .contact-details a { color: var(--primary); }
 
+    /* ── FOOTER ── */
     footer {
       border-top: 1px solid rgba(15, 23, 42, 0.95);
       padding: 1.1rem 1.4rem 2.1rem;
@@ -381,22 +464,30 @@
       gap: 0.6rem;
       font-size: 0.8rem;
       color: var(--muted);
+      transition: border-color 0.3s;
     }
 
+    [data-theme="light"] footer { border-top-color: rgba(203, 213, 225, 0.8); }
     footer a { color: var(--muted); }
 
+    /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
-      .nav {
+      .hamburger { display: block; }
+      .nav { flex-wrap: wrap; }
+      .nav-links {
+        display: none;
+        width: 100%;
         flex-direction: column;
         align-items: flex-start;
+        gap: 0.6rem;
+        padding-bottom: 0.5rem;
       }
-      .nav-links { flex-wrap: wrap; }
+      .nav-links.open { display: flex; }
       main { padding-inline: 1.1rem; }
-      .hero {
-        grid-template-columns: 1fr;
-        padding-inline: 1.4rem;
-      }
+      .hero { grid-template-columns: 1fr; padding-inline: 1.4rem; }
       .hero-right { justify-content: flex-start; margin-top: 1.5rem; }
+      .orbit { width: 210px; height: 210px; }
+      .orbit-center { width: 105px; height: 105px; }
       .contact-grid { grid-template-columns: 1fr; }
       footer { padding-inline: 1.1rem; }
     }
@@ -404,80 +495,83 @@
 </head>
 
 <body>
-  <!-- NAVBAR -->
   <header>
     <div class="nav">
       <div class="nav-left">
-        <img
-          src="images/datacompound-logo.png"
-          alt="DataCompound logo"
-          class="logo-img"
-        />
+        <img src="images/datacompound-logo.png" alt="DataCompound logo" class="logo-img" />
         <div class="brand-text">
           <span>DataCompound</span>
-          <span>Intelligent Data Solutions</span>
+          <span data-i18n="brand.tagline">Soluções Inteligentes de Dados</span>
         </div>
       </div>
 
+      <div class="nav-controls">
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="pt">PT</button>
+          <button class="lang-btn" data-lang="es">ES</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9728;</button>
+        <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+      </div>
+
       <nav class="nav-links">
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#portfolio">Portfolio</a>
-        <a href="#tech">Tech Stack</a>
-        <a href="#contact">Contact</a>
+        <a href="#about"     data-i18n="nav.about">Sobre</a>
+        <a href="#services"  data-i18n="nav.services">Serviços</a>
+        <a href="#portfolio" data-i18n="nav.portfolio">Portfólio</a>
+        <a href="#research"  data-i18n="nav.research">Pesquisa</a>
+        <a href="#tech"      data-i18n="nav.tech">Tecnologias</a>
+        <a href="#contact"   data-i18n="nav.contact">Contato</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <!-- HERO WITH BANNER + FLOATING ORBIT -->
+    <!-- HERO -->
     <section id="top" class="hero-wrapper">
       <div class="hero">
         <div>
           <div class="pill">
-            <span>🔍</span> Data · BI · AI Consulting
+            <span>&#128269;</span>
+            <span data-i18n="hero.pill">Dados · BI · Consultoria em IA</span>
           </div>
 
-          <p class="hero-subtitle">Intelligent Data Solutions</p>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">Soluções Inteligentes de Dados</p>
           <h1>
-            <span>DataCompound</span><br />
-            Architecting AI-ready data foundations.
+            <span class="brand-name">DataCompound</span><br />
+            <span data-i18n="hero.tagline">Construindo fundações de dados prontas para IA.</span>
           </h1>
 
-          <p class="lead">
-            We design and implement <strong>modern data architectures</strong>,
-            <strong>Business Intelligence</strong> solutions, and
-            <strong>machine learning-ready pipelines</strong> so that your data
-            can compound value across analytics, decisions, and AI.
+          <p class="lead" data-i18n-html="hero.lead">
+            Projetamos e implementamos <strong>arquiteturas de dados modernas</strong>,
+            soluções de <strong>Business Intelligence</strong> e
+            <strong>pipelines prontos para machine learning</strong> para que seus dados
+            gerem valor composto em analytics, decisões e IA.
           </p>
 
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#portfolio">View portfolio</a>
-            <a class="btn btn-ghost" href="#contact">Schedule a conversation</a>
+            <a class="btn btn-primary" href="#portfolio" data-i18n="hero.cta.portfolio">Ver portfólio</a>
+            <a class="btn btn-ghost"   href="#contact"   data-i18n="hero.cta.contact">Agendar uma conversa</a>
           </div>
         </div>
 
         <div class="hero-right">
           <div class="orbit">
             <div class="orbit-center">
-              <span>AI-ready Data</span>
-              <strong>Architectures, pipelines,</strong>
-              and BI models engineered for ML from day one.
+              <span class="orbit-title" data-i18n="orbit.title">Dados prontos para IA</span>
+              <span class="orbit-body"  data-i18n="orbit.body">Arquiteturas, pipelines e modelos de BI projetados para ML desde o início.</span>
             </div>
-
             <div class="chip chip-architecture">
-              <div class="chip-icon">🏗</div>
-              <span>Data Architecture</span>
+              <div class="chip-icon">&#127959;</div>
+              <span data-i18n="chip.arch">Arquitetura de Dados</span>
             </div>
-
             <div class="chip chip-ml">
-              <div class="chip-icon">🤖</div>
-              <span>ML Integration</span>
+              <div class="chip-icon">&#129302;</div>
+              <span data-i18n="chip.ml">Integração com ML</span>
             </div>
-
             <div class="chip chip-bi">
-              <div class="chip-icon">📊</div>
-              <span>BI &amp; Dashboards</span>
+              <div class="chip-icon">&#128202;</div>
+              <span data-i18n="chip.bi">BI &amp; Dashboards</span>
             </div>
           </div>
         </div>
@@ -486,75 +580,58 @@
 
     <!-- ABOUT -->
     <section id="about">
-      <h2>About DataCompound</h2>
-      <p class="section-intro">
-        DataCompound is a boutique data & AI practice led by
-        <strong>Diogo Souza</strong>, a data engineer with nearly 15 years of
-        experience across aviation, finance, government, and infrastructure.
-        We specialize in bridging <strong>Business Intelligence</strong> and
-        <strong>Machine Learning</strong> so analytics and AI grow on the same
-        solid foundation.
+      <h2 data-i18n="about.title">Sobre a DataCompound</h2>
+      <p class="section-intro" data-i18n-html="about.intro">
+        A DataCompound é uma consultoria boutique de dados &amp; IA liderada por
+        <strong>Diogo Souza</strong>, engenheiro de dados e arquiteto com quase 15 anos de
+        experiência em aviação, finanças, governo e infraestrutura. Membro Sênior do IEEE.
+        Somos especializados em conectar <strong>Business Intelligence</strong> e
+        <strong>Machine Learning</strong> para que analytics e IA cresçam sobre a mesma base sólida.
       </p>
-
       <div class="card">
-        <h3>A compound approach to data</h3>
-        <p>
-          Rather than chasing isolated dashboards or one-off models, we help
-          you build a <strong>compound data foundation</strong>: layered
-          architectures (ODS · DWH · marts · semantic models) that serve
-          reporting, self-service analytics, and ML workloads consistently.
+        <h3 data-i18n="about.card.title">Uma abordagem composta para dados</h3>
+        <p data-i18n-html="about.card.body">
+          Em vez de perseguir dashboards isolados ou modelos pontuais, ajudamos você a
+          construir uma <strong>fundação de dados composta</strong>: arquiteturas em camadas
+          (ODS · DWH · marts · modelos semânticos) que servem relatórios, analytics
+          self-service e cargas de trabalho de ML de forma consistente.
         </p>
       </div>
     </section>
 
     <!-- SERVICES -->
     <section id="services">
-      <h2>Services</h2>
-      <p class="section-intro">
-        We partner with organizations that want to move from legacy reporting
-        to <strong>AI-ready data ecosystems</strong>.
+      <h2 data-i18n="services.title">Serviços</h2>
+      <p class="section-intro" data-i18n-html="services.intro">
+        Trabalhamos com organizações que querem evoluir de relatórios legados para
+        <strong>ecossistemas de dados prontos para IA</strong>.
       </p>
-
       <div class="grid grid-3">
         <article class="card">
-          <h3>AI-Ready Data Architecture</h3>
-          <p>
-            Design and build robust data models and architectures, including
-            operational data stores, warehouses, marts, and lakehouse patterns
-            aligned with your business domains.
-          </p>
+          <h3 data-i18n="services.arch.title">Arquitetura de Dados para IA</h3>
+          <p data-i18n="services.arch.body">Design e construção de modelos e arquiteturas de dados robustos, incluindo operational data stores, data warehouses, marts e padrões lakehouse alinhados aos domínios de negócio.</p>
           <div class="tag-row">
-            <span class="tag">Dimensional modeling</span>
+            <span class="tag" data-i18n="tag.modeling">Modelagem dimensional</span>
             <span class="tag">Lakehouse</span>
-            <span class="tag">Governance</span>
+            <span class="tag" data-i18n="tag.governance">Governança</span>
           </div>
         </article>
-
         <article class="card">
-          <h3>BI & Self-Service Analytics</h3>
-          <p>
-            End-to-end BI solutions: ingestion, transformation, curated marts
-            and semantic models, plus interactive dashboards used by safety,
-            operations, engineering, and leadership teams.
-          </p>
+          <h3 data-i18n="services.bi.title">BI &amp; Analytics Self-Service</h3>
+          <p data-i18n="services.bi.body">Soluções de BI end-to-end: ingestão, transformação, marts curados e modelos semânticos, além de dashboards interativos usados por equipes de segurança, operações, engenharia e liderança.</p>
           <div class="tag-row">
             <span class="tag">Power BI</span>
             <span class="tag">QlikView</span>
-            <span class="tag">KPI design</span>
+            <span class="tag" data-i18n="tag.kpi">Design de KPIs</span>
           </div>
         </article>
-
         <article class="card">
-          <h3>ML & Advanced Analytics Enablement</h3>
-          <p>
-            Preparation of AI-ready datasets and features, and integration
-            between BI and ML workflows for forecasting, anomaly detection, and
-            risk scoring.
-          </p>
+          <h3 data-i18n="services.ml.title">Habilitação de ML &amp; Analytics Avançados</h3>
+          <p data-i18n="services.ml.body">Preparação de datasets e features prontos para IA, e integração entre fluxos de BI e ML para previsão de demanda, detecção de anomalias e scoring de risco.</p>
           <div class="tag-row">
             <span class="tag">Python</span>
             <span class="tag">Databricks</span>
-            <span class="tag">ML-ready data</span>
+            <span class="tag" data-i18n="tag.mldata">Dados para ML</span>
           </div>
         </article>
       </div>
@@ -562,72 +639,76 @@
 
     <!-- PORTFOLIO -->
     <section id="portfolio">
-      <h2>Selected work</h2>
-      <p class="section-intro">
-        A sample of initiatives that reflect our approach to
-        <strong>AI-driven Business Intelligence</strong>. Detailed case studies
-        are available on request.
+      <h2 data-i18n="portfolio.title">Trabalhos selecionados</h2>
+      <p class="section-intro" data-i18n-html="portfolio.intro">
+        Uma amostra de iniciativas que refletem nossa abordagem ao
+        <strong>Business Intelligence orientado a IA</strong>.
+        Estudos de caso detalhados disponíveis mediante solicitação.
       </p>
-
       <div class="grid grid-3">
         <article class="card">
-          <h3>Aviation Safety & Compliance Data Mart</h3>
-          <p>
-            Unified events, investigations, and audits in a dimensional model
-            powering safety and compliance analytics for multiple stakeholder
-            groups.
-          </p>
-          <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">
-            Tech: SQL Server · Databricks · Delta Lake · Power BI
-          </p>
+          <h3 data-i18n="portfolio.1.title">Data Mart de Segurança e Conformidade em Aviação</h3>
+          <p data-i18n="portfolio.1.body">Unificamos mais de 5 anos de eventos de segurança, investigações e registros de auditoria em 3 domínios de conformidade em um único modelo dimensional — atendendo 6 grupos de stakeholders incluindo Segurança, Operações e Jurídico, substituindo mais de 15 exportações manuais fragmentadas.</p>
+          <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">Tech: SQL Server · Databricks · Delta Lake · Power BI</p>
         </article>
-
         <article class="card">
-          <h3>Self-Service BI for Safety & Operations</h3>
-          <p>
-            Semantic models and dashboards that let teams explore incidents,
-            risk ratings, audit findings and KPIs without manual exports or
-            duplicated logic.
-          </p>
-          <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">
-            Tech: Power BI · QlikView · Tabular models
-          </p>
+          <h3 data-i18n="portfolio.2.title">BI Self-Service para Segurança &amp; Operações</h3>
+          <p data-i18n="portfolio.2.body">Entregamos mais de 40 relatórios suportados por modelo semântico, permitindo que 8 equipes multifuncionais explorem KPIs de forma autônoma — reduzindo o tempo de resposta de relatórios ad hoc de dias para minutos e eliminando extrações manuais recorrentes.</p>
+          <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">Tech: Power BI · QlikView · Tabular models</p>
         </article>
-
         <article class="card">
-          <h3>ML-Ready Datasets for Forecasting & Risk</h3>
-          <p>
-            Curated datasets and feature pipelines supporting demand
-            forecasting, anomaly detection and risk scoring, built on top of an
-            existing BI foundation.
-          </p>
-          <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">
-            Tech: Python · Databricks · ML libraries
-          </p>
+          <h3 data-i18n="portfolio.3.title">Datasets para ML em Previsão &amp; Risco</h3>
+          <p data-i18n="portfolio.3.body">Construímos pipelines de features processando milhões de registros operacionais diários para suportar modelos de previsão de demanda, detecção de anomalias e scoring de risco — conectando uma camada de BI existente a fluxos de ML em produção.</p>
+          <p style="margin-top:0.5rem;font-size:0.82rem;color:var(--muted);">Tech: Python · Databricks · ML libraries</p>
         </article>
       </div>
     </section>
 
+    <!-- RESEARCH -->
+    <section id="research">
+      <h2 data-i18n="research.title">Pesquisa &amp; Publicações</h2>
+      <p class="section-intro" data-i18n="research.intro">Pesquisa aplicada sobre arquitetura de dados moderna e infraestrutura pronta para IA.</p>
+
+      <article class="card" style="display:grid;gap:1.4rem;grid-template-columns:1fr auto;align-items:start;">
+        <div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.8rem;">
+            <span class="tag">SSRN Preprint</span>
+            <span class="tag">June 2026</span>
+            <span class="tag">IEEE Senior Member</span>
+          </div>
+          <h3 style="font-size:1.05rem;margin-bottom:0.5rem;" data-i18n="research.paper1.title">Bridging Conventional DW/BI Infrastructure to AI-Ready Environments via MCP</h3>
+          <p data-i18n="research.paper1.body">Propõe a MCPDB, uma arquitetura de referência de quatro camadas que adiciona um plano de controle MCP governado sobre infraestrutura DW/BI existente — permitindo que agentes de IA consumam dados corporativos com segurança sem desmantelar investimentos em BI.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:0.8rem;">
+            <span class="tag">MCP</span>
+            <span class="tag">Data Warehouse</span>
+            <span class="tag">LLM Agents</span>
+            <span class="tag">Azure</span>
+            <span class="tag">Databricks</span>
+            <span class="tag">dbt</span>
+          </div>
+        </div>
+        <a href="article-mcpdb.html" style="white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;padding:0.55rem 1.1rem;border-radius:999px;background:linear-gradient(135deg,#2f82ff,#22d3ee);color:#0b1120;font-size:0.82rem;font-weight:600;" data-i18n="research.read">Ler artigo</a>
+      </article>
+    </section>
+
     <!-- TECH STACK -->
     <section id="tech">
-      <h2>Tech stack</h2>
-      <p class="section-intro">
-        We work with modern cloud-native platforms, with a strong focus on
-        <strong>Azure</strong>, <strong>Databricks</strong>, and the modern BI
-        ecosystem.
+      <h2 data-i18n="tech.title">Stack tecnológica</h2>
+      <p class="section-intro" data-i18n-html="tech.intro">
+        Trabalhamos com plataformas modernas nativas em nuvem, com forte foco em
+        <strong>Azure</strong>, <strong>Databricks</strong> e o ecossistema de BI moderno.
       </p>
-
       <div class="grid grid-3">
         <article class="card">
-          <h3>Cloud & Data Platforms</h3>
-          <p>Azure · Databricks · Delta Lake · SQL Server · Lakehouse & DWH</p>
+          <h3 data-i18n="tech.cloud.title">Cloud &amp; Plataformas de Dados</h3>
+          <p>Azure · Databricks · Delta Lake · SQL Server · Lakehouse &amp; DWH</p>
         </article>
         <article class="card">
-          <h3>Analytics & BI</h3>
+          <h3 data-i18n="tech.bi.title">Analytics &amp; BI</h3>
           <p>Power BI · QlikView · semantic modeling · metrics layers</p>
         </article>
         <article class="card">
-          <h3>AI & ML</h3>
+          <h3 data-i18n="tech.ai.title">IA &amp; ML</h3>
           <p>Python · ML/AI libraries · feature design · ML-BI integration</p>
         </article>
       </div>
@@ -635,59 +716,302 @@
 
     <!-- CONTACT -->
     <section id="contact">
-      <h2>Let’s talk</h2>
+      <h2 data-i18n="contact.title">Vamos conversar</h2>
       <div class="contact-grid">
         <div>
-          <p>
-            Planning a new data platform, modernizing legacy BI, or preparing
-            for AI initiatives? DataCompound can help you design a pragmatic
-            roadmap and build the foundations that last.
-          </p>
-          <div class="hero-actions" style="margin-top: 1.3rem;">
-            <a class="btn btn-primary" href="mailto:diogowill@gmail.com">
-              Email DataCompound
-            </a>
-            <a
-              class="btn btn-ghost"
-              href="https://www.linkedin.com/in/diogo-souza/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Connect on LinkedIn
-            </a>
+          <p data-i18n="contact.body">Planejando uma nova plataforma de dados, modernizando BI legado ou se preparando para iniciativas de IA? A DataCompound pode ajudá-lo a desenhar um roteiro pragmático e construir as fundações que duram.</p>
+          <div class="hero-actions" style="margin-top:1.3rem;">
+            <a class="btn btn-primary" href="mailto:hello@datacompound.com.br" data-i18n="contact.cta.email">Enviar e-mail</a>
+            <a class="btn btn-ghost" href="https://www.linkedin.com/in/diogo-souza/" target="_blank" rel="noreferrer" data-i18n="contact.cta.linkedin">Conectar no LinkedIn</a>
           </div>
         </div>
-
         <div class="card contact-details">
-          <p><strong>Email</strong><br />
-            <a href="mailto:diogowill@gmail.com">diogowill@gmail.com</a>
-          </p>
-          <p style="margin-top:0.8rem;"><strong>LinkedIn</strong><br />
-            <a
-              href="https://www.linkedin.com/in/diogo-souza/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              linkedin.com/in/diogo-souza
-            </a>
-          </p>
-          <p style="margin-top:0.8rem;"><strong>GitHub</strong><br />
-            <a
-              href="https://github.com/diogolsouza/diogolsouza"
-              target="_blank"
-              rel="noreferrer"
-            >
-              github.com/datacompound
-            </a>
-          </p>
+          <p><strong data-i18n="contact.lbl.email">E-mail</strong><br /><a href="mailto:hello@datacompound.com.br">hello@datacompound.com.br</a></p>
+          <p style="margin-top:0.8rem;"><strong data-i18n="contact.lbl.linkedin">LinkedIn</strong><br /><a href="https://www.linkedin.com/in/diogo-souza/" target="_blank" rel="noreferrer">linkedin.com/in/diogo-souza</a></p>
+          <p style="margin-top:0.8rem;"><strong data-i18n="contact.lbl.github">GitHub</strong><br /><a href="https://github.com/diogolsouza" target="_blank" rel="noreferrer">github.com/diogolsouza</a></p>
         </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <span>© 2025 DataCompound. All rights reserved.</span>
-    <span>Intelligent Data Solutions · Built on GitHub Pages.</span>
+    <span data-i18n="footer.rights">© 2026 DataCompound. Todos os direitos reservados.</span>
+    <span data-i18n="footer.tagline">Soluções Inteligentes de Dados · Hospedado no GitHub Pages.</span>
   </footer>
+
+<script>
+const STRINGS = {
+  pt: {
+    'page.title':          'DataCompound | Soluções Inteligentes de Dados',
+    'brand.tagline':       'Soluções Inteligentes de Dados',
+    'nav.about':           'Sobre',
+    'nav.services':        'Serviços',
+    'nav.portfolio':       'Portfólio',
+    'nav.research':        'Pesquisa',
+    'nav.tech':            'Tecnologias',
+    'nav.contact':         'Contato',
+    'hero.pill':           'Dados · BI · Consultoria em IA',
+    'hero.subtitle':       'Soluções Inteligentes de Dados',
+    'hero.tagline':        'Construindo fundações de dados prontas para IA.',
+    'hero.lead':           'Projetamos e implementamos <strong>arquiteturas de dados modernas</strong>, soluções de <strong>Business Intelligence</strong> e <strong>pipelines prontos para machine learning</strong> para que seus dados gerem valor composto em analytics, decisões e IA.',
+    'hero.cta.portfolio':  'Ver portfólio',
+    'hero.cta.contact':    'Agendar uma conversa',
+    'orbit.title':         'Dados prontos para IA',
+    'orbit.body':          'Arquiteturas, pipelines e modelos de BI projetados para ML desde o início.',
+    'chip.arch':           'Arquitetura de Dados',
+    'chip.ml':             'Integração com ML',
+    'chip.bi':             'BI & Dashboards',
+    'about.title':         'Sobre a DataCompound',
+    'about.intro':         'A DataCompound é uma consultoria boutique de dados & IA liderada por <strong>Diogo Souza</strong>, engenheiro de dados com quase 15 anos de experiência em aviação, finanças, governo e infraestrutura. Somos especializados em conectar <strong>Business Intelligence</strong> e <strong>Machine Learning</strong> para que analytics e IA cresçam sobre a mesma base sólida.',
+    'about.card.title':    'Uma abordagem composta para dados',
+    'about.card.body':     'Em vez de perseguir dashboards isolados ou modelos pontuais, ajudamos você a construir uma <strong>fundação de dados composta</strong>: arquiteturas em camadas (ODS · DWH · marts · modelos semânticos) que servem relatórios, analytics self-service e cargas de trabalho de ML de forma consistente.',
+    'services.title':      'Serviços',
+    'services.intro':      'Trabalhamos com organizações que querem evoluir de relatórios legados para <strong>ecossistemas de dados prontos para IA</strong>.',
+    'services.arch.title': 'Arquitetura de Dados para IA',
+    'services.arch.body':  'Design e construção de modelos e arquiteturas de dados robustos, incluindo operational data stores, data warehouses, marts e padrões lakehouse alinhados aos domínios de negócio.',
+    'services.bi.title':   'BI & Analytics Self-Service',
+    'services.bi.body':    'Soluções de BI end-to-end: ingestão, transformação, marts curados e modelos semânticos, além de dashboards interativos usados por equipes de segurança, operações, engenharia e liderança.',
+    'services.ml.title':   'Habilitação de ML & Analytics Avançados',
+    'services.ml.body':    'Preparação de datasets e features prontos para IA, e integração entre fluxos de BI e ML para previsão de demanda, detecção de anomalias e scoring de risco.',
+    'tag.modeling':        'Modelagem dimensional',
+    'tag.governance':      'Governança',
+    'tag.kpi':             'Design de KPIs',
+    'tag.mldata':          'Dados para ML',
+    'portfolio.title':     'Trabalhos selecionados',
+    'portfolio.intro':     'Uma amostra de iniciativas que refletem nossa abordagem ao <strong>Business Intelligence orientado a IA</strong>. Estudos de caso detalhados disponíveis mediante solicitação.',
+    'portfolio.1.title':   'Data Mart de Segurança e Conformidade em Aviação',
+    'portfolio.1.body':    'Unificamos mais de 5 anos de eventos de segurança, investigações e registros de auditoria em 3 domínios de conformidade em um único modelo dimensional — atendendo 6 grupos de stakeholders incluindo Segurança, Operações e Jurídico, substituindo mais de 15 exportações manuais fragmentadas.',
+    'portfolio.2.title':   'BI Self-Service para Segurança & Operações',
+    'portfolio.2.body':    'Entregamos mais de 40 relatórios suportados por modelo semântico, permitindo que 8 equipes multifuncionais explorem KPIs de forma autônoma — reduzindo o tempo de resposta de relatórios ad hoc de dias para minutos e eliminando extrações manuais recorrentes.',
+    'portfolio.3.title':   'Datasets para ML em Previsão & Risco',
+    'portfolio.3.body':    'Construímos pipelines de features processando milhões de registros operacionais diários para suportar modelos de previsão de demanda, detecção de anomalias e scoring de risco — conectando uma camada de BI existente a fluxos de ML em produção.',
+    'tech.title':          'Stack tecnológica',
+    'tech.intro':          'Trabalhamos com plataformas modernas nativas em nuvem, com forte foco em <strong>Azure</strong>, <strong>Databricks</strong> e o ecossistema de BI moderno.',
+    'tech.cloud.title':    'Cloud & Plataformas de Dados',
+    'tech.bi.title':       'Analytics & BI',
+    'tech.ai.title':       'IA & ML',
+    'contact.title':       'Vamos conversar',
+    'contact.body':        'Planejando uma nova plataforma de dados, modernizando BI legado ou se preparando para iniciativas de IA? A DataCompound pode ajudá-lo a desenhar um roteiro pragmático e construir as fundações que duram.',
+    'contact.cta.email':   'Enviar e-mail',
+    'contact.cta.linkedin':'Conectar no LinkedIn',
+    'contact.lbl.email':   'E-mail',
+    'contact.lbl.linkedin':'LinkedIn',
+    'contact.lbl.github':  'GitHub',
+    'research.title':           'Pesquisa & Publicações',
+    'research.intro':           'Pesquisa aplicada sobre arquitetura de dados moderna e infraestrutura pronta para IA.',
+    'research.paper1.title':    'Bridging Conventional DW/BI Infrastructure to AI-Ready Environments via MCP',
+    'research.paper1.body':     'Propõe a MCPDB, uma arquitetura de referência de quatro camadas que adiciona um plano de controle MCP governado sobre infraestrutura DW/BI existente — permitindo que agentes de IA consumam dados corporativos com segurança sem desmantelar investimentos em BI.',
+    'research.read':            'Ler artigo',
+    'about.intro':              'A DataCompound é uma consultoria boutique de dados & IA liderada por <strong>Diogo Souza</strong>, engenheiro de dados e arquiteto com quase 15 anos de experiência em aviação, finanças, governo e infraestrutura. Membro Sênior do IEEE e pesquisador independente, especializado em conectar <strong>Business Intelligence</strong> e <strong>Machine Learning</strong> para que analytics e IA cresçam sobre a mesma base sólida.',
+    'footer.rights':            '© 2026 DataCompound. Todos os direitos reservados.',
+    'footer.tagline':           'Soluções Inteligentes de Dados · Hospedado no GitHub Pages.',
+  },
+  es: {
+    'page.title':          'DataCompound | Soluciones Inteligentes de Datos',
+    'brand.tagline':       'Soluciones Inteligentes de Datos',
+    'nav.about':           'Sobre',
+    'nav.services':        'Servicios',
+    'nav.portfolio':       'Portafolio',
+    'nav.research':        'Investigación',
+    'nav.tech':            'Tecnologías',
+    'nav.contact':         'Contacto',
+    'hero.pill':           'Datos · BI · Consultoría en IA',
+    'hero.subtitle':       'Soluciones Inteligentes de Datos',
+    'hero.tagline':        'Construyendo fundamentos de datos listos para IA.',
+    'hero.lead':           'Diseñamos e implementamos <strong>arquitecturas de datos modernas</strong>, soluciones de <strong>Business Intelligence</strong> y <strong>pipelines listos para machine learning</strong> para que sus datos generen valor compuesto en analytics, decisiones e IA.',
+    'hero.cta.portfolio':  'Ver portafolio',
+    'hero.cta.contact':    'Agendar una conversación',
+    'orbit.title':         'Datos listos para IA',
+    'orbit.body':          'Arquitecturas, pipelines y modelos de BI diseñados para ML desde el primer día.',
+    'chip.arch':           'Arquitectura de Datos',
+    'chip.ml':             'Integración con ML',
+    'chip.bi':             'BI & Dashboards',
+    'about.title':         'Sobre DataCompound',
+    'about.intro':         'DataCompound es una consultora boutique de datos & IA liderada por <strong>Diogo Souza</strong>, ingeniero de datos con casi 15 años de experiencia en aviación, finanzas, gobierno e infraestructura. Nos especializamos en conectar <strong>Business Intelligence</strong> y <strong>Machine Learning</strong> para que analytics e IA crezcan sobre la misma base sólida.',
+    'about.card.title':    'Un enfoque compuesto para los datos',
+    'about.card.body':     'En lugar de perseguir dashboards aislados o modelos puntuales, te ayudamos a construir una <strong>base de datos compuesta</strong>: arquitecturas en capas (ODS · DWH · marts · modelos semánticos) que sirven reporting, analytics de autoservicio y cargas de trabajo de ML de forma consistente.',
+    'services.title':      'Servicios',
+    'services.intro':      'Trabajamos con organizaciones que quieren evolucionar de reportes legacy a <strong>ecosistemas de datos listos para IA</strong>.',
+    'services.arch.title': 'Arquitectura de Datos para IA',
+    'services.arch.body':  'Diseño y construcción de modelos y arquitecturas de datos robustos, incluyendo operational data stores, data warehouses, marts y patrones lakehouse alineados con los dominios de negocio.',
+    'services.bi.title':   'BI & Analytics de Autoservicio',
+    'services.bi.body':    'Soluciones de BI end-to-end: ingestión, transformación, marts curados y modelos semánticos, además de dashboards interactivos utilizados por equipos de seguridad, operaciones, ingeniería y liderazgo.',
+    'services.ml.title':   'Habilitación de ML & Analytics Avanzados',
+    'services.ml.body':    'Preparación de datasets y features listos para IA, e integración entre flujos de BI y ML para previsión de demanda, detección de anomalías y scoring de riesgo.',
+    'tag.modeling':        'Modelado dimensional',
+    'tag.governance':      'Gobernanza',
+    'tag.kpi':             'Diseño de KPIs',
+    'tag.mldata':          'Datos para ML',
+    'portfolio.title':     'Trabajos seleccionados',
+    'portfolio.intro':     'Una muestra de iniciativas que reflejan nuestro enfoque al <strong>Business Intelligence impulsado por IA</strong>. Estudios de caso detallados disponibles bajo solicitud.',
+    'portfolio.1.title':   'Data Mart de Seguridad y Cumplimiento en Aviación',
+    'portfolio.1.body':    'Unificamos más de 5 años de eventos de seguridad, investigaciones y registros de auditoría en 3 dominios de cumplimiento en un único modelo dimensional — sirviendo a 6 grupos de stakeholders incluyendo Seguridad, Operaciones y Legal, reemplazando más de 15 exportaciones manuales fragmentadas.',
+    'portfolio.2.title':   'BI de Autoservicio para Seguridad & Operaciones',
+    'portfolio.2.body':    'Entregamos más de 40 informes respaldados por modelo semántico que permiten a 8 equipos multifuncionales explorar KPIs de forma autónoma — reduciendo el tiempo de respuesta de informes ad hoc de días a minutos y eliminando extracciones manuales recurrentes.',
+    'portfolio.3.title':   'Datasets para ML en Previsión & Riesgo',
+    'portfolio.3.body':    'Construimos pipelines de features que procesan millones de registros operacionales diarios para soportar modelos de previsión de demanda, detección de anomalías y scoring de riesgo — conectando una capa de BI existente con flujos de ML en producción.',
+    'tech.title':          'Stack tecnológico',
+    'tech.intro':          'Trabajamos con plataformas modernas nativas en la nube, con fuerte enfoque en <strong>Azure</strong>, <strong>Databricks</strong> y el ecosistema de BI moderno.',
+    'tech.cloud.title':    'Cloud & Plataformas de Datos',
+    'tech.bi.title':       'Analytics & BI',
+    'tech.ai.title':       'IA & ML',
+    'contact.title':       'Hablemos',
+    'contact.body':        '¿Planificando una nueva plataforma de datos, modernizando BI legacy o preparándose para iniciativas de IA? DataCompound puede ayudarle a diseñar una hoja de ruta pragmática y construir las bases que perduran.',
+    'contact.cta.email':   'Enviar correo',
+    'contact.cta.linkedin':'Conectar en LinkedIn',
+    'contact.lbl.email':   'Correo',
+    'contact.lbl.linkedin':'LinkedIn',
+    'contact.lbl.github':  'GitHub',
+    'research.title':           'Investigación & Publicaciones',
+    'research.intro':           'Investigación aplicada sobre arquitectura de datos moderna e infraestructura lista para IA.',
+    'research.paper1.title':    'Bridging Conventional DW/BI Infrastructure to AI-Ready Environments via MCP',
+    'research.paper1.body':     'Propone MCPDB, una arquitectura de referencia de cuatro capas que añade un plano de control MCP gobernado sobre infraestructura DW/BI existente — permitiendo que agentes de IA consuman datos corporativos de forma segura sin desmantelar las inversiones en BI.',
+    'research.read':            'Leer artículo',
+    'about.intro':              'DataCompound es una consultora boutique de datos & IA liderada por <strong>Diogo Souza</strong>, ingeniero de datos y arquitecto con casi 15 años de experiencia en aviación, finanzas, gobierno e infraestructura. Miembro Sénior del IEEE e investigador independiente, especializado en conectar <strong>Business Intelligence</strong> y <strong>Machine Learning</strong> para que analytics e IA crezcan sobre la misma base sólida.',
+    'footer.rights':            '© 2026 DataCompound. Todos los derechos reservados.',
+    'footer.tagline':           'Soluciones Inteligentes de Datos · Alojado en GitHub Pages.',
+  },
+  en: {
+    'page.title':          'DataCompound | Intelligent Data Solutions',
+    'brand.tagline':       'Intelligent Data Solutions',
+    'nav.about':           'About',
+    'nav.services':        'Services',
+    'nav.portfolio':       'Portfolio',
+    'nav.research':        'Research',
+    'nav.tech':            'Tech Stack',
+    'nav.contact':         'Contact',
+    'hero.pill':           'Data · BI · AI Consulting',
+    'hero.subtitle':       'Intelligent Data Solutions',
+    'hero.tagline':        'Architecting AI-ready data foundations.',
+    'hero.lead':           'We design and implement <strong>modern data architectures</strong>, <strong>Business Intelligence</strong> solutions, and <strong>machine learning-ready pipelines</strong> so that your data can compound value across analytics, decisions, and AI.',
+    'hero.cta.portfolio':  'View portfolio',
+    'hero.cta.contact':    'Schedule a conversation',
+    'orbit.title':         'AI-ready Data',
+    'orbit.body':          'Architectures, pipelines, and BI models engineered for ML from day one.',
+    'chip.arch':           'Data Architecture',
+    'chip.ml':             'ML Integration',
+    'chip.bi':             'BI & Dashboards',
+    'about.title':         'About DataCompound',
+    'about.intro':         'DataCompound is a boutique data & AI practice led by <strong>Diogo Souza</strong>, a data engineer with nearly 15 years of experience across aviation, finance, government, and infrastructure. We specialize in bridging <strong>Business Intelligence</strong> and <strong>Machine Learning</strong> so analytics and AI grow on the same solid foundation.',
+    'about.card.title':    'A compound approach to data',
+    'about.card.body':     'Rather than chasing isolated dashboards or one-off models, we help you build a <strong>compound data foundation</strong>: layered architectures (ODS · DWH · marts · semantic models) that serve reporting, self-service analytics, and ML workloads consistently.',
+    'services.title':      'Services',
+    'services.intro':      'We partner with organizations that want to move from legacy reporting to <strong>AI-ready data ecosystems</strong>.',
+    'services.arch.title': 'AI-Ready Data Architecture',
+    'services.arch.body':  'Design and build robust data models and architectures, including operational data stores, warehouses, marts, and lakehouse patterns aligned with your business domains.',
+    'services.bi.title':   'BI & Self-Service Analytics',
+    'services.bi.body':    'End-to-end BI solutions: ingestion, transformation, curated marts and semantic models, plus interactive dashboards used by safety, operations, engineering, and leadership teams.',
+    'services.ml.title':   'ML & Advanced Analytics Enablement',
+    'services.ml.body':    'Preparation of AI-ready datasets and features, and integration between BI and ML workflows for forecasting, anomaly detection, and risk scoring.',
+    'tag.modeling':        'Dimensional modeling',
+    'tag.governance':      'Governance',
+    'tag.kpi':             'KPI design',
+    'tag.mldata':          'ML-ready data',
+    'portfolio.title':     'Selected work',
+    'portfolio.intro':     'A sample of initiatives that reflect our approach to <strong>AI-driven Business Intelligence</strong>. Detailed case studies are available on request.',
+    'portfolio.1.title':   'Aviation Safety & Compliance Data Mart',
+    'portfolio.1.body':    'Unified 5+ years of safety events, investigations, and audit records across 3 compliance domains into a single dimensional model — serving 6 stakeholder groups including Safety, Operations, and Legal, replacing 15+ fragmented manual exports.',
+    'portfolio.2.title':   'Self-Service BI for Safety & Operations',
+    'portfolio.2.body':    'Delivered 40+ semantic model-backed reports enabling 8 cross-functional teams to self-serve KPI exploration — cutting ad hoc report turnaround from days to minutes and eliminating recurring manual data pulls.',
+    'portfolio.3.title':   'ML-Ready Datasets for Forecasting & Risk',
+    'portfolio.3.body':    'Built feature pipelines processing millions of daily operational records to support demand forecasting, anomaly detection, and risk scoring models — bridging an existing BI layer with production ML workflows.',
+    'tech.title':          'Tech stack',
+    'tech.intro':          'We work with modern cloud-native platforms, with a strong focus on <strong>Azure</strong>, <strong>Databricks</strong>, and the modern BI ecosystem.',
+    'tech.cloud.title':    'Cloud & Data Platforms',
+    'tech.bi.title':       'Analytics & BI',
+    'tech.ai.title':       'AI & ML',
+    'contact.title':       "Let's talk",
+    'contact.body':        'Planning a new data platform, modernizing legacy BI, or preparing for AI initiatives? DataCompound can help you design a pragmatic roadmap and build the foundations that last.',
+    'contact.cta.email':   'Email DataCompound',
+    'contact.cta.linkedin':'Connect on LinkedIn',
+    'contact.lbl.email':   'Email',
+    'contact.lbl.linkedin':'LinkedIn',
+    'contact.lbl.github':  'GitHub',
+    'research.title':           'Research & Publications',
+    'research.intro':           'Applied research on modern data architecture and AI-ready infrastructure.',
+    'research.paper1.title':    'Bridging Conventional DW/BI Infrastructure to AI-Ready Environments via MCP',
+    'research.paper1.body':     'Proposes MCPDB, a four-layer reference architecture that retrofits a governed MCP control plane onto existing DW/BI infrastructure — enabling AI agents to securely consume enterprise data without dismantling existing BI investments.',
+    'research.read':            'Read paper',
+    'about.intro':              'DataCompound is a boutique data & AI practice led by <strong>Diogo Souza</strong>, a data engineer and architect with nearly 15 years of experience across aviation, finance, government, and infrastructure. IEEE Senior Member and independent researcher, specializing in bridging <strong>Business Intelligence</strong> and <strong>Machine Learning</strong> so analytics and AI grow on the same solid foundation.',
+    'footer.rights':            '© 2026 DataCompound. All rights reserved.',
+    'footer.tagline':           'Intelligent Data Solutions · Built on GitHub Pages.',
+  }
+};
+
+// ── Language ──────────────────────────────────────────────────
+function applyLang(lang) {
+  const s = STRINGS[lang];
+  if (!s) return;
+  document.documentElement.lang = lang;
+  document.title = s['page.title'];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const v = s[el.dataset.i18n];
+    if (v !== undefined) el.textContent = v;
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const v = s[el.dataset.i18nHtml];
+    if (v !== undefined) el.innerHTML = v;
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  localStorage.setItem('dc-lang', lang);
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+});
+
+// ── Theme ─────────────────────────────────────────────────────
+const themeToggle = document.getElementById('themeToggle');
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeToggle.textContent = theme === 'dark' ? '☀' : '☾';
+  localStorage.setItem('dc-theme', theme);
+}
+
+themeToggle.addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+});
+
+// Sync icon to theme already set by inline script
+themeToggle.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾';
+
+// ── Hamburger ─────────────────────────────────────────────────
+const hamburger = document.querySelector('.hamburger');
+const navLinks  = document.querySelector('.nav-links');
+
+hamburger.addEventListener('click', () => {
+  const open = navLinks.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', open);
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', false);
+  });
+});
+
+// ── Scroll highlight ──────────────────────────────────────────
+const sections = document.querySelectorAll('main section[id]');
+const links    = document.querySelectorAll('.nav-links a');
+
+const scrollObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => scrollObserver.observe(s));
+
+// ── Init ──────────────────────────────────────────────────────
+applyLang(localStorage.getItem('dc-lang') || 'pt');
+</script>
 </body>
 </html>
